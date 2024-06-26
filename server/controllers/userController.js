@@ -144,9 +144,130 @@ const registerUser = async (req, res, next) => {
   }
 };
 
+///////////////////////////////////////////////////////////////////////
+//------------------------- Login User ----------------------------------
+const loginUser = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return next(new HttpError("fill in all fields", 422));
+    }
+
+    const newEmail = email.toLowerCase();
+    const user = await User.findOne({ email: newEmail });
+
+    if (!user) {
+      return next(new HttpError("Invalid credentials", 422));
+    }
+    const comparePass = await bcrypt.compare(password, user.password);
+
+    if (!comparePass) {
+      return next(new HttpError("Invalid credentials", 422));
+    }
+
+    const { _id: id, name } = user;
+    console.log("second");
+
+    const token = jwt.sign({ id, name }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.status(200).json({ token, id, name });
+  } catch (error) {
+    return next(
+      new HttpError("Login Failed , please check your credentials", 422)
+    );
+  }
+};
+////////////////////////////////////////////////////////////////////////////
+//----------------------- CHANGE AVATAR ---------------------------------------
+const sharp = require("sharp");
+
+const changeAvatar = async (req, res, next) => {
+  try {
+    if (!req.files || !req.files.avatar) {
+      return next(new HttpError("Please choose an image", 422));
+    }
+
+    const { avatar } = req.files;
+    //
+    let compressedImageBuffer;
+    if (avatar.size > 1000000) {
+      compressedImageBuffer = await sharp(avatar.data)
+        .resize(1024, 1024, { fit: "inside" })
+        .jpeg({ quality: 70 })
+        .toBuffer();
+    } else {
+      compressedImageBuffer = avatar.data;
+    }
+    //
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return next(new HttpError("User not found", 404));
+    }
+    //
+    if (user.avatar) {
+      const deleteParams = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: user.avatar,
+      };
+
+      try {
+        await s3Client.send(new DeleteObjectCommand(deleteParams));
+      } catch (err) {
+        console.error("Error deleting old avatar from S3:", err);
+        throw new HttpError("Failed to delete old avatar from S3", 500);
+      }
+    }
+    //
+    let fileName = avatar.name;
+    let splittedFilename = fileName.split(".");
+    let newFilename =
+      splittedFilename[0] +
+      uuid() +
+      "." +
+      splittedFilename[splittedFilename.length - 1];
+    //
+    const uploadParams = {
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: `avatar/${newFilename}`,
+      Body: compressedImageBuffer,
+      ContentType: mime.lookup(avatar.name) || "application/octet-stream",
+      ACL: "private",
+    };
+
+    try {
+      await s3Client.send(new PutObjectCommand(uploadParams));
+    } catch (err) {
+      console.error("Error uploading avatar to S3:", err);
+      throw new HttpError("Error uploading avatar to S3", 500);
+    }
+    //
+
+    const updatedAvatar = await User.findByIdAndUpdate(
+      req.user.id,
+      { avatar: `avatar/${newFilename}` },
+      { new: true }
+    );
+
+    if (!updatedAvatar) {
+      return next(new HttpError("Avatar couldn't be changed", 422));
+    }
+
+    const avatarURL = await getObjectURL(`avatar/${newFilename}`);
+    res.status(200).json({ avatarURL });
+  } catch (error) {
+    console.error("Error changing avatar:", error);
+    return next(new HttpError(error.message, 500));
+  }
+};
+
 //
 
 module.exports = {
   OTP_for_Register,
   registerUser,
+  loginUser,
+  changeAvatar,
 };

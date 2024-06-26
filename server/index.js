@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { connect } = require("mongoose");
+const fileUpload = require("express-fileupload"); // Import express-fileupload
 
 require("dotenv").config();
 const userRoutes = require("./routes/userRoutes");
@@ -30,6 +31,7 @@ app.use(cors(corsOptions));
 
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
+app.use(fileUpload()); // Use file upload middleware
 
 // API routes
 app.use("/api/users", userRoutes);
