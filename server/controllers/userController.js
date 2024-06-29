@@ -263,11 +263,41 @@ const changeAvatar = async (req, res, next) => {
   }
 };
 
-//
+//////////////////////////////////////////////////////////////////////////////
+//----------------------- GET USER ---------------------------------------
+const getUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id).select("-password");
+    if (!user) {
+      return next(new HttpError("User not found", 404));
+    }
+    console.log(user);
+    let avatarURL;
+    if (user.avatar) {
+      avatarURL = await getObjectURL(user.avatar);
+    }
+
+    const userResponse = {
+      ...user.toObject(),
+    };
+
+    if (avatarURL) {
+      userResponse.avatarURL = avatarURL;
+    }
+
+    res.status(200).json(userResponse);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
+};
+//////////////////////////////////////////////////////////////////////////////////
+//-------------------- GET ALL USERS --------------------------------------
 
 module.exports = {
   OTP_for_Register,
   registerUser,
   loginUser,
   changeAvatar,
+  getUser,
 };

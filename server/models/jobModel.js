@@ -1,17 +1,19 @@
 const mongoose = require("mongoose");
+
 const jobCategories = [
-  "Web Development",
-  "Mobile App Development",
-  "Graphic Design",
-  "Digital Marketing",
-  "Content Writing",
-  "Data Entry",
-  "Customer Support",
-  "Sales",
-  "Accounting",
-  "Video Production",
-  "Photography",
+  "web development",
+  "mobile app development",
+  "graphic design",
+  "digital marketing",
+  "content writing",
+  "data entry",
+  "customer support",
+  "sales",
+  "accounting",
+  "video production",
+  "photography",
 ];
+
 const jobSchema = new mongoose.Schema(
   {
     title: {
@@ -33,15 +35,13 @@ const jobSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    categories: [
-      {
-        type: String,
-        required: true,
-        lowercase: true,
-        trim: true,
-        enum: jobCategories,
-      },
-    ],
+    category: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+      enum: jobCategories,
+    },
     status: {
       type: String,
       enum: ["open", "in progress", "completed", "cancelled"],

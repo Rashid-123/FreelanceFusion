@@ -5,6 +5,7 @@ const fileUpload = require("express-fileupload"); // Import express-fileupload
 
 require("dotenv").config();
 const userRoutes = require("./routes/userRoutes");
+const jobRoutes = require("./routes/jobRoutes");
 
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
@@ -35,6 +36,7 @@ app.use(fileUpload()); // Use file upload middleware
 
 // API routes
 app.use("/api/users", userRoutes);
+app.use("/api/jobs", jobRoutes);
 
 // Error handling middleware
 app.use(notFound);
