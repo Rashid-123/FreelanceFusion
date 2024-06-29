@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 // import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -23,7 +23,7 @@ const Login = () => {
   return (
     <section className="login">
       <div className="container2">
-        <h2>sign in</h2>
+        <h2>sign</h2>
         <form className="form  login__form">
           {/* {error && <p className="form__error-message">{error}</p>} */}
           <input

@@ -11,8 +11,12 @@
   --border-color: #edeff3;
   --border-color2: #fafafa;
   --primary-green: #02bc82;
+
   --green-shadow: #f4f9fd;
-  --navy-blue: #4b6b63;
+  /* --green-shadow: #e6eff6; */
+
+  /* --navy-blue: #4b6b63; */
+  /* --navy-blue: #4b8275; */
   --radius-1: 5px;
   --radius-2: 10px;
   --radius-3: 15px;
@@ -149,6 +153,13 @@ nav {
   background-color: var(--button-1);
 }
 /* ///-------------- Login -------------------------------/ */
+
+.login {
+  margin-top: 7rem;
+}
+.login h2 {
+  margin-bottom: 1rem;
+}
 .form {
   display: flex;
   flex-direction: column;
@@ -159,14 +170,11 @@ input,
 select,
 textarea {
   /* width: 80%; */
-
   color: black;
   letter-spacing: 0.6px;
   padding: 0.6rem 1rem;
   border-radius: var(--radius-1);
-
   resize: none;
-  border: 1px solid var();
   border: 1px solid var(--border-color);
   transition: var(--transition);
 }
@@ -176,6 +184,7 @@ input:focus {
 }
 textarea:focus {
   border: 1px solid var(--border-color);
+  letter-spacing: 0.6px;
 }
 
 .form__error-message {
@@ -265,25 +274,43 @@ textarea:focus {
   background-color: var(--button-1);
 }
 /* ----------------- Category ---------------------- */
-.scroll-container {
+
+.category {
+  margin-top: 4rem;
+  position: relative;
+}
+.popular {
+  font-size: 42px;
+  font-weight: 500;
+  color: #323232;
+  margin-bottom: 1.5rem;
+}
+.scrollable-container {
   display: flex;
   align-items: center;
   overflow: hidden;
-  position: relative;
+
   width: 100%;
 }
 
 .scroll-button {
-  background-color: #007bff;
+  /* background-color: #015ee9; */
   color: white;
   border: none;
-  padding: 10px;
+  border-radius: 50%;
+  padding: 13px;
   cursor: pointer;
   z-index: 1;
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
+  border: 1px solid var(--border-color);
+  box-shadow: rgba(108, 108, 126, 0.2) 0px 7px 29px 0px;
+  transform: translateX(-60%) translateY(50%);
+
   font-size: 18px;
+}
+.right {
+  transform: translateX(80%) translateY(50%);
 }
 
 .scroll-button.left {
@@ -309,10 +336,92 @@ textarea:focus {
 }
 
 .scroll-item {
-  min-width: 200px;
+  width: 230px;
   margin: 0 10px;
   padding: 20px;
-  background-color: #f1f1f1;
+  background-color: var(--green-shadow);
   border-radius: 10px;
+  border: 1.5px solid var(--button-1);
   text-align: center;
+}
+
+.scroll-item h3 {
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  margin-bottom: 1rem;
+  color: #323232;
+}
+.scroll-item img {
+  width: 190px;
+  height: 140px;
+  border-radius: var(--radius-1);
+}
+/* /////////////////////////////////////////////////////////// */
+/* ------------------------ TESTEMONIAL----------------------------- */
+.testemonial {
+  background-color: var(--green-shadow);
+  padding: 3rem;
+  margin-top: 5rem;
+}
+
+.test_scroll-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 70%;
+  overflow: hidden;
+  margin: 0rem auto;
+}
+
+.test_scroll-button {
+  border-radius: 50%;
+  z-index: 1;
+  padding: 7px 12px;
+  border: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.test_scroll-content {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+}
+
+.test_scroll-content::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+}
+
+.testimonial-item {
+  flex: 0 0 calc(100% - 20px); /* Make each item take up the full width of the container */
+  padding: 22px 5px;
+  scroll-snap-align: center;
+  text-align: center;
+  /* background-color: #e6bfbf; */
+  margin: 0 10px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid var(--button-1);
+}
+.testimonial-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.testimonial-name {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.testimonial-description {
+  margin: 15px 3rem;
+  font-size: 1rem;
+  color: #555;
 }
