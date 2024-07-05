@@ -1,4 +1,3 @@
-import React from "react";
 import Category_Item from "./Category_Item";
 import web from "../assets/web.webp";
 import app from "../assets/app.jpeg";

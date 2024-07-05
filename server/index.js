@@ -12,7 +12,7 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:3000", // Development environment
+  "http://localhost:5173", // Development environment
   "https://word-wise-psi.vercel.app", // Primary Vercel domain
   "https://word-wise-gvharzz4b-shadan-rashids-projects.vercel.app", // Deployment specific Vercel domain
 ];

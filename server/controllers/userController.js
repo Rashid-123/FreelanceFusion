@@ -126,7 +126,6 @@ const registerUser = async (req, res, next) => {
       return next(new HttpError("Invalid OTP.", 422));
     }
 
-    // Clear the OTP from storage after successful registration
     delete otpStorage[newEmail];
 
     const salt = await bcrypt.genSalt(10);
@@ -292,12 +291,54 @@ const getUser = async (req, res, next) => {
   }
 };
 //////////////////////////////////////////////////////////////////////////////////
-//-------------------- GET ALL USERS --------------------------------------
+//-------------------- Update User Details --------------------------------------
+const updateUser = async (req, res) => {
+  const { id } = req.params;
+  const { name, contact, skills, bio } = req.body;
 
+  console.log("Update request for user ID:", id);
+  console.log("Request body:", req.body);
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (name) {
+      console.log("Updating name:", name);
+      user.name = name;
+    }
+    if (contact) {
+      console.log("Updating contact:", contact);
+      user.contact = contact;
+    }
+    if (skills) {
+      const skills = JSON.parse(req.body.skills);
+      user.skills = skills;
+    }
+    if (bio) {
+      console.log("Updating bio:", bio);
+      user.bio = bio;
+    }
+
+    await user.save();
+
+    console.log("User details updated successfully:", user);
+
+    res
+      .status(200)
+      .json({ message: "User details updated successfully", user });
+  } catch (error) {
+    res.status(500).json({ message: "server error" });
+  }
+};
 module.exports = {
   OTP_for_Register,
   registerUser,
   loginUser,
   changeAvatar,
   getUser,
+  updateUser,
 };

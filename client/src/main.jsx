@@ -10,6 +10,10 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Profile from "./pages/Profile";
+import Jobs from "./pages/Jobs";
+import Createjob from "./pages/Createjob";
+import JobDetails from "./pages/JobDetails";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -19,6 +23,10 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
+      { path: "profile", element: <Profile /> },
+      { path: "jobs", element: <Jobs /> },
+      { path: "create_job", element: <Createjob /> },
+      { path: "jobdetails/:id", element: <JobDetails /> },
     ],
   },
 ]);

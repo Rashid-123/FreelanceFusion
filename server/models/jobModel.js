@@ -27,12 +27,7 @@ const jobSchema = new mongoose.Schema(
       trim: true,
     },
     budget: {
-      type: Number,
-      required: true,
-    },
-    client: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
       required: true,
     },
     category: {
@@ -41,6 +36,11 @@ const jobSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
       enum: jobCategories,
+    },
+    client: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     status: {
       type: String,

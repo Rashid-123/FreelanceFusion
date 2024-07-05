@@ -3,6 +3,7 @@ import Testimonial_Item from "./Testimonial_Item";
 import testimonial1 from "../assets/testimonial1.jpeg";
 import testimonial2 from "../assets/testimonial2.jpg";
 import testimonial3 from "../assets/testimonial3.jpg";
+import testimonial4 from "../assets/testimonial4.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
@@ -63,36 +64,48 @@ const Testimonial = () => {
       description:
         "The content writing services on this platform were excellent. The writer produced well-researched, engaging, and SEO-friendly articles for our blog. They were timely and communicated effectively, ensuring the project met all our requirements.",
     },
+    {
+      name: "Sam Altman",
+      image: testimonial4,
+      description:
+        "The content writing services on this platform were excellent. The writer produced well-researched, engaging, and SEO-friendly articles for our blog. They were timely and communicated effectively, ensuring the project met all our requirements.",
+    },
   ];
 
   return (
-    <section className="testemonial">
-      <div className="test_scroll-container">
-        <button className="test_scroll-button test_left" onClick={scrollLeft}>
-          <FontAwesomeIcon
-            icon={faChevronLeft}
-            style={{
-              color: "#555",
-              fontSize: "1.5rem",
-            }}
-          />
-        </button>
-        <div className="test_scroll-content" ref={scrollContainerRef}>
-          {testimonials.map((testimonial, index) => (
-            <Testimonial_Item
-              key={index}
-              image={testimonial.image}
-              name={testimonial.name}
-              description={testimonial.description}
+    <section className="testemonial_container">
+      <h2>Happy Clients</h2>
+      <div className="testemonial">
+        <div className="test_scroll-container">
+          <button className="test_scroll-button test_left" onClick={scrollLeft}>
+            <FontAwesomeIcon
+              icon={faChevronLeft}
+              style={{
+                color: "#555",
+                fontSize: "1.5rem",
+              }}
             />
-          ))}
+          </button>
+          <div className="test_scroll-content" ref={scrollContainerRef}>
+            {testimonials.map((testimonial, index) => (
+              <Testimonial_Item
+                key={index}
+                image={testimonial.image}
+                name={testimonial.name}
+                description={testimonial.description}
+              />
+            ))}
+          </div>
+          <button
+            className="test_scroll-button test_right"
+            onClick={scrollRight}
+          >
+            <FontAwesomeIcon
+              icon={faChevronRight}
+              style={{ color: "#555", fontSize: "1.5rem" }}
+            />
+          </button>
         </div>
-        <button className="test_scroll-button test_right" onClick={scrollRight}>
-          <FontAwesomeIcon
-            icon={faChevronRight}
-            style={{ color: "#555", fontSize: "1.5rem" }}
-          />
-        </button>
       </div>
     </section>
   );
