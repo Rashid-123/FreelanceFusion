@@ -55,6 +55,9 @@ const userSchema = new mongoose.Schema(
         budget: {
           type: Number,
         },
+        duration: {
+          type: String,
+        },
         status: {
           type: String,
           enum: ["pending", "accepted", "rejected"],

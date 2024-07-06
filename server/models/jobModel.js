@@ -42,6 +42,10 @@ const jobSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    duration: {
+      type: String,
+      required: true,
+    },
     status: {
       type: String,
       enum: ["open", "in progress", "completed", "cancelled"],
@@ -59,6 +63,9 @@ const jobSchema = new mongoose.Schema(
         },
         budget: {
           type: Number,
+        },
+        duration: {
+          type: String,
         },
         status: {
           type: String,

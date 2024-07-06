@@ -183,7 +183,7 @@ nav {
 
 .loader-icon {
   font-size: 3rem; /* Adjust the size as needed */
-  color: #007bff; /* Change the color as needed */
+  color: var(--button-2); /* Change the color as needed */
 }
 
 /* ///-------------- Login -------------------------------/ */
@@ -703,4 +703,141 @@ textarea:focus {
   padding: 5px 0px;
   border: none;
   border-radius: var(--radius-1);
+}
+.create_job_form .budget-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.create_job_form .budget-input-container .dollar-sign {
+  position: absolute;
+  left: 10px;
+  pointer-events: none;
+  color: #aaa;
+}
+
+.create_job_form .budget-input-container input {
+  padding-left: 70px; /* Adjust based on the width of the dollar sign */
+  width: 345px;
+}
+/* ------------------- JOB DETAILS -------------------------- */
+.job_details_container {
+  padding: 3rem;
+  border: 1px solid var(--dark-border-1);
+  border-radius: var(--radius-1);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.job_details_container h1 {
+  letter-spacing: 0.8px;
+}
+.job-details_description {
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  font-weight: 300;
+  line-height: 1.3;
+  color: var(--text-2);
+}
+.job_details_container span {
+  margin-right: 10px;
+}
+
+.job_details_budget,
+.job_details_duration {
+  letter-spacing: 0.6px;
+  width: fit-content;
+  padding: 10px 15px;
+  background-color: var(--dark-bg-2);
+}
+
+.job_details_category {
+  letter-spacing: 0.6px;
+  width: fit-content;
+}
+.skill {
+  padding: 10px 15px;
+  background-color: var(--button-1);
+  border-radius: var(--radius-1);
+}
+.status {
+  letter-spacing: 0.6px;
+}
+.status span {
+  padding: 8px 15px;
+  background-color: rgb(72, 194, 72);
+  border-radius: var(--radius-1);
+  margin-left: 15px;
+  color: black;
+  font-size: 17px;
+}
+
+/* //------------------- BID -------------- */
+.bid_container {
+  padding: 3rem;
+  border: 1px solid var(--dark-border-1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+.bid_details {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.bid-group {
+  display: flex;
+  align-items: center;
+}
+.bid-group input,
+.bid-group textarea {
+  width: 300px;
+  border: 1px solid var(--dark-border-1);
+  outline: none;
+}
+.bid-group input:focus,
+.bid-group textarea:focus {
+  border-color: var(--text-2);
+}
+.bid-group label {
+  width: 150px;
+}
+.bid_details .bid-budget-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.bid_details .bid-budget-container .dollar-sign {
+  position: absolute;
+  left: 10px;
+  pointer-events: none;
+  color: #aaa;
+}
+
+.bid_details .bid-budget-container input {
+  padding-left: 80px; /* Adjust based on the width of the dollar sign */
+  width: 235px;
+}
+.bid-error,
+.bid-success {
+  padding: 5px;
+  border-radius: var(--radius-1);
+  background-color: #e32636;
+  color: white;
+  text-align: center;
+}
+.bid-success {
+  color: black;
+  background-color: #00a86b;
+}
+.bid-submit {
+  padding: 8px;
+  background-color: #007bff;
+  color: white;
+  font-size: 17px;
+  border-radius: var(--radius-1);
+  border: none;
 }

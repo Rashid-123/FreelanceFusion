@@ -42,9 +42,9 @@ const createJob = async (req, res, next) => {
   try {
     console.log("1");
 
-    const { title, description, budget, category } = req.body;
+    const { title, description, budget, duration, category } = req.body;
     console.log("1");
-    if (!title || !description || !budget || !category) {
+    if (!title || !description || !budget || !category || !duration) {
       return next(new HttpError("Please fill in all fields", 422));
     }
     console.log("2");
@@ -60,6 +60,7 @@ const createJob = async (req, res, next) => {
       title,
       description,
       budget,
+      duration,
       client: req.user.id,
       category,
     });
@@ -114,5 +115,51 @@ const get_job_details = async (req, res, next) => {
     res.status(500).send({ message: error.message });
   }
 };
+//------------------------ ADD PROPOSALS --------------------------------
+const addProposal = async (req, res) => {
+  const { freelancerId, proposalText, budget, status, duration } = req.body;
+  const { id: jobId } = req.params;
 
-module.exports = { createJob, getJobs, category_job, get_job_details };
+  if (!freelancerId || !proposalText || !budget || !duration) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    const job = await Job.findById(jobId);
+    const user = await User.findById(freelancerId);
+
+    const newProposal = {
+      freelancer: freelancerId,
+      proposalText,
+      budget,
+      duration,
+      status: status || "pending",
+    };
+
+    const newProposal_send = {
+      job: jobId,
+      proposalText,
+      budget,
+      duration,
+      status: status || "pending",
+    };
+
+    user.proposalsSent.push(newProposal_send);
+    await user.save();
+
+    job.proposals.push(newProposal);
+    await job.save();
+
+    res.status(201).json({ message: "Proposal added successfully", job });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  createJob,
+  getJobs,
+  category_job,
+  get_job_details,
+  addProposal,
+};

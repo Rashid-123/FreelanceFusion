@@ -23,6 +23,7 @@ const CreateJob = () => {
   const [category, setCategory] = useState(jobCategories[0]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [duration, setDuration] = useState("");
 
   const currentUser = useSelector((state) => state.user.currentUser);
 
@@ -38,6 +39,7 @@ const CreateJob = () => {
           title,
           description,
           budget,
+          duration,
           category,
         },
         {
@@ -86,12 +88,24 @@ const CreateJob = () => {
         </div>
         <div className="form-group">
           <label htmlFor="budget">Budget</label>
+          <div className="budget-input-container">
+            <span className="dollar-sign">$ (USD) </span>
+            <input
+              type="number"
+              id="budget"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="duration">Time</label>
           <input
             type="text"
-            id="budget"
-            value={budget}
-            onChange={(e) => setBudget(e.target.value)}
-            required
+            id="duration"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
           />
         </div>
         <div className="form-group">
