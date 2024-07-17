@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import Loader from "../components/Loader";
 import { useSelector } from "react-redux";
+
 const JobDetails = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
@@ -16,6 +17,7 @@ const JobDetails = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
   const userId = currentUser?.id;
   const token = currentUser?.token;
+
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
@@ -72,10 +74,24 @@ const JobDetails = () => {
     return <div>Job not found</div>;
   }
 
+  const formattedDate = new Date(jobDetails.createdAt).toLocaleDateString(
+    undefined,
+    {
+      weekday: "long", // 'long' for the full name, 'short' for abbreviated
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
+
   return (
-    <section className="container ">
+    <section className="container">
       <div className="job_details_container">
-        <h1>{jobDetails.title}</h1>
+        <div>
+          <p className="job_details_date">{formattedDate}</p>
+          <h1>{jobDetails.title}</h1>
+        </div>
+
         <p className="job-details_description">{jobDetails.description}</p>
         <p className="job_details_budget">
           <span>Budget : </span>
@@ -91,8 +107,10 @@ const JobDetails = () => {
         <p className="status">
           Status :<span>{jobDetails.status}</span>
         </p>
+        <p className="job_details_duration">
+          <span>Total Bids : </span> {jobDetails.proposals.length}
+        </p>
       </div>
-      {/* // */}
       <div className="bid_container">
         <h2>Place your bid</h2>
         <form onSubmit={handleBidSubmit} className="bid_details">

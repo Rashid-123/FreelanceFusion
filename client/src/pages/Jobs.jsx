@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import Loader from "../components/Loader";
+import Job from "../components/Job";
+import { Link } from "react-router-dom";
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState(""); // State to manage selected category
-  const [categories, setCategories] = useState([]); // State to manage unique categories
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -18,7 +19,6 @@ const Jobs = () => {
         setJobs(response.data);
         setIsLoading(false);
 
-        // Extract unique categories from jobs
         const uniqueCategories = [
           ...new Set(response.data.map((job) => job.category)),
         ];
@@ -44,7 +44,7 @@ const Jobs = () => {
   }
 
   return (
-    <section className="container ">
+    <section className="container">
       <div className="category_filter">
         <select
           id="category"
@@ -62,8 +62,12 @@ const Jobs = () => {
 
       <div className="job_container">
         {filteredJobs.map((job) => (
-          <Link key={job._id} className="job" to={`/jobDetails/${job._id}`}>
-            <h2>{job.title}</h2>
+          <Link key={job.id} to={`/jobDetails/${job._id}`} className="job">
+            <h2>
+              {job.title.length > 35
+                ? `${job.title.slice(0, 35)}...`
+                : job.title}
+            </h2>
             <p className="job_description">
               {job.description.length > 100
                 ? `${job.description.slice(0, 100)}...`

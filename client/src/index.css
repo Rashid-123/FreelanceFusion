@@ -471,6 +471,7 @@ textarea:focus {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* border: 1px solid var(--dark-border-1); */
 }
 .avatar__wrapper {
   width: 150px;
@@ -484,7 +485,7 @@ textarea:focus {
 .profile__avatar {
   width: 150px;
   height: 150px;
-  border: 5px solid var(--dark-border-1);
+  border: 8px solid var(--dark-border-1);
   overflow: hidden;
   display: flex;
   justify-content: center;
@@ -559,7 +560,7 @@ textarea:focus {
 }
 .form-label {
   display: inline-block;
-  width: 200px;
+  width: 170px;
 }
 
 .property {
@@ -577,7 +578,7 @@ textarea,
   border: 1px solid #ccc;
   outline: none;
   transition: border-color 0.3s;
-  /* width: 300px; */
+  width: 300px;
 }
 
 input:focus,
@@ -593,6 +594,37 @@ textarea:disabled,
   color: var(--text-1);
   background-color: var(--dark-bg-2);
   border: 1px solid var(--dark-border-1);
+}
+
+/* // */
+.profile_projects_tag {
+  text-align: center;
+  margin-top: 3rem;
+}
+.profile_projects_container {
+  padding: 3rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+/* ///// */
+.profile_proposal_tag {
+  text-align: center;
+}
+.profile_proposal_container {
+  padding: 3rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.proposal_item {
+  padding: 2rem;
+  display: flex;
+}
+.bid_status span {
+  padding: 5px 10px;
+  background-color: #e32636;
+  border-radius: var(--radius-1);
+  margin-left: 10px;
+  margin-top: 10px;
 }
 
 /* //--------------- Job -------------------------------- */
@@ -732,6 +764,7 @@ textarea:focus {
 }
 .job_details_container h1 {
   letter-spacing: 0.8px;
+  margin-top: 0.5rem;
 }
 .job-details_description {
   font-size: 18px;
@@ -840,4 +873,23 @@ textarea:focus {
   font-size: 17px;
   border-radius: var(--radius-1);
   border: none;
+}
+/* ----------------------------- USER PROJECT DETAILS ----------------- */
+.project_proposal_label {
+  text-align: center;
+  margin-top: 3rem;
+}
+.project_proposal_container {
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 3rem;
+}
+.proposal {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  gap: 2rem;
+  border: 1px solid var(--dark-border-1);
+  border-radius: var(--radius-2);
 }
