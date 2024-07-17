@@ -1,5 +1,31 @@
 const mongoose = require("mongoose");
 
+const proposalSentSchema = new mongoose.Schema({
+  job: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Job",
+  },
+  proposalText: {
+    type: String,
+    trim: true,
+  },
+  budget: {
+    type: Number,
+  },
+  duration: {
+    type: String,
+  },
+  status: {
+    type: String,
+    enum: ["pending", "accepted", "rejected"],
+    default: "pending",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -12,6 +38,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
+      index: true,
     },
     password: {
       type: String,
@@ -20,7 +47,6 @@ const userSchema = new mongoose.Schema(
     contact: {
       type: String,
     },
-
     avatar: {
       type: String,
     },
@@ -31,6 +57,13 @@ const userSchema = new mongoose.Schema(
     skills: [
       {
         type: String,
+        index: true,
+      },
+    ],
+    projects: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Job",
       },
     ],
     createdAt: {
@@ -41,33 +74,13 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    // Proposals Sent for Jobs
-    proposalsSent: [
-      {
-        job: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Job",
-        },
-        proposalText: {
-          type: String,
-          trim: true,
-        },
-        budget: {
-          type: Number,
-        },
-        duration: {
-          type: String,
-        },
-        status: {
-          type: String,
-          enum: ["pending", "accepted", "rejected"],
-          default: "pending",
-        },
-      },
-    ],
+
+    proposalsSent: [proposalSentSchema],
   },
   { timestamps: true }
 );
+
+userSchema.index({ _id: 1 });
 
 const User = mongoose.model("User", userSchema);
 

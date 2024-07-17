@@ -56,19 +56,42 @@ const createJob = async (req, res, next) => {
     }
     console.log("3");
 
-    const newJob = await Job.create({
-      title,
-      description,
-      budget,
-      duration,
-      client: req.user.id,
-      category,
-    });
-    console.log("4");
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    res
-      .status(201)
-      .json({ message: `New job created with title: ${newJob.title}` });
+    try {
+      const newJob = await Job.create(
+        [
+          {
+            title,
+            description,
+            budget,
+            duration,
+            client: req.user.id,
+            category,
+          },
+        ],
+        { session }
+      );
+      console.log("4");
+
+      await User.findByIdAndUpdate(
+        req.user.id,
+        { $push: { projects: newJob[0]._id } },
+        { session }
+      );
+
+      await session.commitTransaction();
+      session.endSession();
+
+      res
+        .status(201)
+        .json({ message: `New job created with title: ${newJob[0].title}` });
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      throw error;
+    }
   } catch (error) {
     console.error(error);
     return next(
@@ -127,6 +150,16 @@ const addProposal = async (req, res) => {
   try {
     const job = await Job.findById(jobId);
     const user = await User.findById(freelancerId);
+
+    const hasProposed = user.proposalsSent.some(
+      (proposal) => proposal.job.toString() === jobId
+    );
+
+    if (hasProposed) {
+      return res.status(400).json({
+        message: "You have already submitted a proposal for this job.",
+      });
+    }
 
     const newProposal = {
       freelancer: freelancerId,

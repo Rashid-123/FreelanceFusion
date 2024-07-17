@@ -96,8 +96,12 @@ const OTP_for_Register = async (req, res, next) => {
 const registerUser = async (req, res, next) => {
   console.log("register user is running");
   try {
-    const { name, email, password, password2, otp } = req.body;
-    if (!name || !email || !password || !otp) {
+    // const { name, email, password, password2, otp } = req.body;
+    // if (!name || !email || !password || !otp) {
+    //   return next(new HttpError("Fill in all fields", 422));
+    // }
+    const { name, email, password, password2 } = req.body;
+    if (!name || !email || !password || !password2) {
       return next(new HttpError("Fill in all fields", 422));
     }
 
@@ -121,12 +125,12 @@ const registerUser = async (req, res, next) => {
       return next(new HttpError("Passwords do not match.", 422));
     }
 
-    const storedOTP = otpStorage[newEmail];
-    if (!storedOTP || parseInt(otp) !== storedOTP) {
-      return next(new HttpError("Invalid OTP.", 422));
-    }
+    // const storedOTP = otpStorage[newEmail];
+    // if (!storedOTP || parseInt(otp) !== storedOTP) {
+    //   return next(new HttpError("Invalid OTP.", 422));
+    // }
 
-    delete otpStorage[newEmail];
+    // delete otpStorage[newEmail];
 
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
@@ -266,12 +270,20 @@ const changeAvatar = async (req, res, next) => {
 //----------------------- GET USER ---------------------------------------
 const getUser = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const user = await User.findById(id).select("-password");
+    const userId = req.params.id;
+
+    const user = await User.findById(userId)
+      .populate("projects", "title description budget category duration status")
+      .populate({
+        path: "proposalsSent.job",
+        select: "title description budget category duration status createdAt",
+      })
+      .select("-password");
+
     if (!user) {
-      return next(new HttpError("User not found", 404));
+      return res.status(404).json({ message: "User not found" });
     }
-    console.log(user);
+
     let avatarURL;
     if (user.avatar) {
       avatarURL = await getObjectURL(user.avatar);
@@ -285,9 +297,10 @@ const getUser = async (req, res, next) => {
       userResponse.avatarURL = avatarURL;
     }
 
-    res.status(200).json(userResponse);
+    res.json(userResponse);
   } catch (error) {
-    return next(new HttpError(error));
+    console.error("Error fetching user details:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 //////////////////////////////////////////////////////////////////////////////////
@@ -334,6 +347,32 @@ const updateUser = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
+///----------- FETCH ALL SEND PROPOSALS -----------------------------------
+const getUserProposalsWithJobData = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const user = await User.findById(userId).populate({
+      path: "proposalsSent.job",
+      model: "Job",
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      userId: user._id,
+      name: user.name,
+      email: user.email,
+      proposalsSent: user.proposalsSent,
+    });
+  } catch (error) {
+    console.error("Error fetching user proposals with job data:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   OTP_for_Register,
   registerUser,
@@ -341,4 +380,5 @@ module.exports = {
   changeAvatar,
   getUser,
   updateUser,
+  getUserProposalsWithJobData,
 };
