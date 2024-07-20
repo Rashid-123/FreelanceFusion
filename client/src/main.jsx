@@ -10,7 +10,7 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Profile from "./pages/Profile";
+import Profile from "./pages/profile";
 import Jobs from "./pages/Jobs";
 import Createjob from "./pages/Createjob";
 import JobDetails from "./pages/JobDetails";
