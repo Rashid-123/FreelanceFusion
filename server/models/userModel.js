@@ -74,13 +74,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-
     proposalsSent: [proposalSentSchema],
   },
   { timestamps: true }
 );
-
-userSchema.index({ _id: 1 });
 
 const User = mongoose.model("User", userSchema);
 
