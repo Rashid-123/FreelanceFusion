@@ -80,16 +80,38 @@ a {
   outline: none;
 }
 
+/* .container2 {
+  width: 450px;
+  margin: auto auto;
+  min-height: 500px;
+  margin-top: 6rem;
+} */
+/* ///////////////////////////////////////////////////////////////////// */
+/* ------------------------- Common Classes for containers ------------------ */
+
 .container {
   width: 80%;
   margin: auto auto;
   margin-top: 7rem;
 }
-.container2 {
-  width: 450px;
-  margin: auto auto;
-  min-height: 500px;
-  margin-top: 6rem;
+
+.container_2 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  margin-top: 2.5rem;
+}
+.container_3 {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding: 2rem;
+  border: solid 1px var(--dark-border-2);
+  border-radius: var(--radius-2);
+  overflow: hidden;
+}
+.container_3:hover {
+  border-color: var(--dark-border-1);
 }
 /* -------------------- HEADER ------------------------ */
 .header {
@@ -596,37 +618,6 @@ textarea:disabled,
   border: 1px solid var(--dark-border-1);
 }
 
-/* // */
-.profile_projects_tag {
-  text-align: center;
-  margin-top: 3rem;
-}
-.profile_projects_container {
-  padding: 3rem;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-}
-/* ///// */
-.profile_proposal_tag {
-  text-align: center;
-}
-.profile_proposal_container {
-  padding: 3rem;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-}
-.proposal_item {
-  padding: 2rem;
-  display: flex;
-}
-.bid_status span {
-  padding: 5px 10px;
-  background-color: #e32636;
-  border-radius: var(--radius-1);
-  margin-left: 10px;
-  margin-top: 10px;
-}
-
 /* //--------------- Job -------------------------------- */
 .category_filter {
   background-color: var(--dark-bg-2);
@@ -647,25 +638,8 @@ select#category option {
   background-color: #444; /* Background color of the option elements */
   color: #fff; /* Font color of the option elements */
 }
-.job_container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 3rem;
-  margin-top: 2.5rem;
-}
-.job {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  padding: 2rem;
-  border: solid 1px var(--dark-border-1);
-  border-radius: var(--radius-2);
-  overflow: hidden;
-}
-.job:hover {
-  border-color: var(--dark-border-2);
-}
-.job h2 {
+
+.job_title {
   margin-bottom: 1rem;
   letter-spacing: 0.5px;
 }
@@ -892,4 +866,46 @@ textarea:focus {
   gap: 2rem;
   border: 1px solid var(--dark-border-1);
   border-radius: var(--radius-2);
+}
+
+/* /////////////////////////////////////////////////////////////////////////// */
+/* --------------------- User Projects page -------------------------------------- */
+.project_tag {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.profile_proposal_tag {
+  text-align: center;
+}
+.profile_proposal_container {
+  padding: 3rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.proposal_item {
+  padding: 2rem;
+  display: flex;
+}
+
+.bid_status span {
+  padding: 5px 10px;
+  background-color: #e32636;
+  border-radius: var(--radius-1);
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+/* ///////////////////////////////////////////////////////////////////// */
+/* ------------------------ Ongoing projects ---------------- */
+.job_status {
+  width: fit-content;
+  background-color: var(--dark-border-2);
+  color: var(--text-2);
+  padding: 5px 8px;
+}
+.job_status span {
+  margin-left: 5px;
+  color: #00a86b;
 }

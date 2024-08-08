@@ -2,16 +2,20 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const User = require("../models/userModel");
-const Conversation = require("../models/conversationModel");
+const LiveJobs = require("../models/LiveJobes");
 const nodemailer = require("nodemailer");
 const { v4: uuid } = require("uuid");
 const HttpError = require("../models/errorModel");
 const mime = require("mime-types");
+//
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+//
 const {
   S3Client,
   GetObjectCommand,
   PutObjectCommand,
   DeleteObjectCommand,
+  RestoreRequestFilterSensitiveLog,
 } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
@@ -186,6 +190,7 @@ const loginUser = async (req, res, next) => {
 ////////////////////////////////////////////////////////////////////////////
 //----------------------- CHANGE AVATAR ---------------------------------------
 const sharp = require("sharp");
+const Job = require("../models/jobModel");
 
 const changeAvatar = async (req, res, next) => {
   try {
@@ -272,13 +277,9 @@ const getUser = async (req, res, next) => {
   try {
     const userId = req.params.id;
 
-    const user = await User.findById(userId)
-      .populate("projects", "title description budget category duration status")
-      .populate({
-        path: "proposalsSent.job",
-        select: "title description budget category duration status createdAt",
-      })
-      .select("-password");
+    const user = await User.findById(userId).select(
+      "name skills avatar contact bio"
+    );
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -290,12 +291,13 @@ const getUser = async (req, res, next) => {
     }
 
     const userResponse = {
-      ...user.toObject(),
+      _id: user._id,
+      name: user.name,
+      skills: user.skills,
+      avatarURL: avatarURL || null,
+      contact: user.contact,
+      bio: user.bio,
     };
-
-    if (avatarURL) {
-      userResponse.avatarURL = avatarURL;
-    }
 
     res.json(userResponse);
   } catch (error) {
@@ -372,6 +374,205 @@ const getUserProposalsWithJobData = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+///////////////////////////// USER PROJECTS //////////////////////////////////
+//  Protected
+
+const userProjects = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId).populate("projects");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user.projects);
+  } catch (error) {
+    console.error("Error fetching user's projects:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+//////////////////////// UserBids //////////////////////////////////////////
+const userBids = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId).populate("proposalsSent");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user.proposalsSent);
+  } catch (error) {
+    console.error("Error fetching user's proposals:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+//////////////////////////////////////////////////////////////////////////////////
+const checkout = async (req, res, next) => {
+  const { clientId, jobId, jobTitle, jobDescription, duration, proposal } =
+    req.body;
+
+  if (!Number.isInteger(proposal.budget) || proposal.budget <= 0) {
+    return res.status(400).json({ error: "Invalid amount" });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(jobId)) {
+    return res.status(400).json({ error: "Invalid Job ID" });
+  }
+  if (!mongoose.Types.ObjectId.isValid(clientId)) {
+    return res.status(400).json({ error: "Invalid Client ID" });
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const stripeSession = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: { name: jobTitle },
+            unit_amount: proposal.budget * 100,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `http://localhost:5173/ongoingProjects/${clientId}`,
+      cancel_url: "http://localhost:5173/cancel",
+    });
+
+    const transaction = {
+      transactionId: stripeSession.id,
+      amount: proposal.budget,
+      type: "debit",
+      from: clientId,
+      to: "Platform",
+      date: new Date(),
+    };
+
+    await User.findByIdAndUpdate(
+      clientId,
+      { $push: { transactionHistory: transaction } },
+      { new: true, useFindAndModify: false, session }
+    );
+
+    const liveJob = new LiveJobs({
+      client: clientId,
+      freelancer: proposal.freelancer,
+      title: jobTitle,
+      description: jobDescription,
+      amount: proposal.budget,
+      duration: proposal.duration,
+      milestones: [],
+      status: "ongoing",
+    });
+
+    const savedLiveJob = await liveJob.save({ session });
+
+    await User.findByIdAndUpdate(
+      clientId,
+      {
+        $push: { ongoingProjects: savedLiveJob._id },
+        $pull: { projects: jobId },
+      },
+      { new: true, useFindAndModify: false, session }
+    );
+
+    await User.findByIdAndUpdate(
+      proposal.freelancer,
+      {
+        $push: { ongoingJob: savedLiveJob._id },
+        $pull: { proposalsSent: { _id: proposal.freelancer_proposalSentId } },
+      },
+      { new: true, useFindAndModify: false, session }
+    );
+
+    const deletedJob = await Job.findByIdAndDelete(jobId, { session });
+
+    if (!deletedJob) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({ error: "Job not found" });
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.json({ id: stripeSession.id });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    res.status(500).send({ error: error.message });
+  }
+};
+//////////////////////////////////////////////////////
+
+const ongoingJobs = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const ongoingJobIds = user.ongoingJob;
+
+    const liveJobs = await LiveJobs.find({ _id: { $in: ongoingJobIds } });
+
+    res.status(200).json(liveJobs);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//////////////////////////////////////////////////////
+
+const ongoingProjects = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id).select("ongoingProjects").populate({
+      path: "ongoingProjects",
+      // match: { status: "ongoing" },
+      model: "LiveJob",
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user.ongoingProjects);
+  } catch (error) {
+    next(error); // Pass error to the error-handling middleware
+  }
+};
+/////////////////////////////////////////////////////////////////////////
+
+const ongoingJob_details = async (req, res, next) => {
+  console.log("in job details");
+  try {
+    console.log("in try");
+    const { id } = req.params;
+    const jobDetails = await LiveJobs.findById(id); // Await the asynchronous call
+    if (!jobDetails) {
+      return res.status(404).json({ message: "Job not found" }); // Proper status code
+    }
+    console.log(jobDetails);
+    res.status(200).json(jobDetails);
+  } catch (error) {
+    next(error); // Pass the error to the next middleware
+  }
+};
+
+/////////////////////////////////////////////////////////////////////////////////
 
 module.exports = {
   OTP_for_Register,
@@ -381,4 +582,10 @@ module.exports = {
   getUser,
   updateUser,
   getUserProposalsWithJobData,
+  userProjects,
+  userBids,
+  checkout,
+  ongoingJobs,
+  ongoingProjects,
+  ongoingJob_details,
 };

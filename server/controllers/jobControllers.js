@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const User = require("../models/userModel");
 const Job = require("../models/jobModel");
-const Conversation = require("../models/conversationModel");
+
 const nodemailer = require("nodemailer");
 const { v4: uuid } = require("uuid");
 const HttpError = require("../models/errorModel");
@@ -102,7 +102,9 @@ const createJob = async (req, res, next) => {
 //////////////////////////////////////////////////////////////////////
 //--------------------- Get All Jobs -------------------------------
 const getJobs = async (req, res, next) => {
+  console.log("1");
   try {
+    console.log("2");
     const jobs = await Job.find().sort({ updated: -1 });
     res.status(200).json(jobs);
   } catch (error) {
@@ -151,6 +153,14 @@ const addProposal = async (req, res) => {
     const job = await Job.findById(jobId);
     const user = await User.findById(freelancerId);
 
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     const hasProposed = user.proposalsSent.some(
       (proposal) => proposal.job.toString() === jobId
     );
@@ -160,14 +170,6 @@ const addProposal = async (req, res) => {
         message: "You have already submitted a proposal for this job.",
       });
     }
-
-    const newProposal = {
-      freelancer: freelancerId,
-      proposalText,
-      budget,
-      duration,
-      status: status || "pending",
-    };
 
     const newProposal_send = {
       job: jobId,
@@ -179,6 +181,17 @@ const addProposal = async (req, res) => {
 
     user.proposalsSent.push(newProposal_send);
     await user.save();
+
+    const savedProposalSent = user.proposalsSent[user.proposalsSent.length - 1];
+
+    const newProposal = {
+      freelancer: freelancerId,
+      freelancer_proposalSentId: savedProposalSent._id,
+      proposalText,
+      budget,
+      duration,
+      status: status || "pending",
+    };
 
     job.proposals.push(newProposal);
     await job.save();

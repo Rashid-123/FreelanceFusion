@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// Proposal Sent Schema
 const proposalSentSchema = new mongoose.Schema({
   job: {
     type: mongoose.Schema.Types.ObjectId,
@@ -26,6 +27,36 @@ const proposalSentSchema = new mongoose.Schema({
   },
 });
 
+// Transaction History Schema
+const transactionHistorySchema = new mongoose.Schema({
+  transactionId: {
+    type: String,
+    required: true,
+  },
+  amount: {
+    type: Number,
+    required: true,
+  },
+  type: {
+    type: String,
+    enum: ["credit", "debit"],
+    required: true,
+  },
+  from: {
+    type: String,
+    required: true,
+  },
+  to: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+// User Schema
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -75,6 +106,19 @@ const userSchema = new mongoose.Schema(
       default: Date.now,
     },
     proposalsSent: [proposalSentSchema],
+    ongoingJob: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "LiveJob",
+      },
+    ],
+    ongoingProjects: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "LiveJobs",
+      },
+    ],
+    transactionHistory: [transactionHistorySchema],
   },
   { timestamps: true }
 );

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../components/Loader";
-import Job from "../components/Job";
+// import Job from "../components/Job";
 import { Link } from "react-router-dom";
 
 const Jobs = () => {
@@ -60,10 +60,14 @@ const Jobs = () => {
         </select>
       </div>
 
-      <div className="job_container">
+      <div className="container_2">
         {filteredJobs.map((job) => (
-          <Link key={job.id} to={`/jobDetails/${job._id}`} className="job">
-            <h2>
+          <Link
+            key={job._id}
+            to={`/jobDetails/${job._id}`}
+            className="job container_3"
+          >
+            <h2 className="job_title">
               {job.title.length > 35
                 ? `${job.title.slice(0, 35)}...`
                 : job.title}

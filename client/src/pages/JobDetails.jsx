@@ -111,49 +111,55 @@ const JobDetails = () => {
           <span>Total Bids : </span> {jobDetails.proposals.length}
         </p>
       </div>
-      <div className="bid_container">
-        <h2>Place your bid</h2>
-        <form onSubmit={handleBidSubmit} className="bid_details">
-          <div className="bid-group">
-            <label htmlFor="bidDescription">Description</label>
-            <textarea
-              rows={3}
-              id="bidDescription"
-              value={bidDescription}
-              onChange={(e) => setBidDescription(e.target.value)}
-              required
-            />
-          </div>
-          <div className="bid-group">
-            <label htmlFor="bidBudget">Budget</label>
-            <div className="bid-budget-container">
-              <span className="dollar-sign">$ (USD) </span>
-              <input
-                type="number"
-                id="bidBudget"
-                value={bidBudget}
-                onChange={(e) => setBidBudget(e.target.value)}
+      {jobDetails.client != userId ? (
+        <div className="bid_container">
+          <h2>Place your bid</h2>
+          <form onSubmit={handleBidSubmit} className="bid_details">
+            <div className="bid-group">
+              <label htmlFor="bidDescription">Description</label>
+              <textarea
+                rows={3}
+                id="bidDescription"
+                value={bidDescription}
+                onChange={(e) => setBidDescription(e.target.value)}
                 required
               />
             </div>
-          </div>
-          <div className="bid-group">
-            <label htmlFor="bidDuration">Duration</label>
-            <input
-              type="text"
-              id="bidDuration"
-              value={bidDuration}
-              onChange={(e) => setBidDuration(e.target.value)}
-              required
-            />
-          </div>
-          {bidError && <p className="bid-error">{bidError}</p>}
-          {bidSuccess && <p className="bid-success">{bidSuccess}</p>}
-          <button type="submit" className="bid-submit">
-            Place Bid
-          </button>
-        </form>
-      </div>
+            <div className="bid-group">
+              <label htmlFor="bidBudget">Budget</label>
+              <div className="bid-budget-container">
+                <span className="dollar-sign">$ (USD) </span>
+                <input
+                  type="number"
+                  id="bidBudget"
+                  value={bidBudget}
+                  onChange={(e) => setBidBudget(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            <div className="bid-group">
+              <label htmlFor="bidDuration">Duration</label>
+              <input
+                type="text"
+                id="bidDuration"
+                value={bidDuration}
+                onChange={(e) => setBidDuration(e.target.value)}
+                required
+              />
+            </div>
+            {bidError && <p className="bid-error">{bidError}</p>}
+            {bidSuccess && <p className="bid-success">{bidSuccess}</p>}
+            <button type="submit" className="bid-submit">
+              Place Bid
+            </button>
+          </form>
+        </div>
+      ) : (
+        <h2 className="bid_container">
+          This is your Project , you can't bid on this{" "}
+        </h2>
+      )}
     </section>
   );
 };

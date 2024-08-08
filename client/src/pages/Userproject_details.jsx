@@ -1,16 +1,13 @@
 import { useState, useEffect } from "react";
-import { resolvePath, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import Loader from "../components/Loader";
-import { useSelector } from "react-redux";
+import ProjectProposalContainer from "../components/ProjectProposalContainer";
 
 const Userproject_details = () => {
   const { id } = useParams();
   const [jobDetails, setJobDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const currentUser = useSelector((state) => state.user.currentUser);
-  const userId = currentUser?.id;
-  const token = currentUser?.token;
 
   // Function to format the date
   const formatDate = (dateString) => {
@@ -29,8 +26,8 @@ const Userproject_details = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_BASE_URL}/jobs/details/${id}`
         );
-        console.log(response.data);
         setJobDetails(response.data);
+        console.log(jobDetails);
       } catch (error) {
         console.error("Error fetching job details:", error);
       } finally {
@@ -39,8 +36,8 @@ const Userproject_details = () => {
     };
 
     fetchJobDetails();
-  }, [id]);
-
+  }, []);
+  console.log(jobDetails);
   if (isLoading) {
     return <Loader />;
   }
@@ -68,27 +65,19 @@ const Userproject_details = () => {
         </p>
         <p className="job_details_category">
           <span>Skill required : </span>
-          <span className="skill">{jobDetails.category}</span>
+          <span className="skill">
+            {jobDetails.category || "Not specified"}
+          </span>
         </p>
         <p className="status">
           Status :<span>{jobDetails.status}</span>
         </p>
         <p className="job_details_duration">
-          <span>Total Bids : </span> {jobDetails.proposals.length}
+          <span>Total Bids : </span> {jobDetails.proposals?.length || 0}
         </p>
       </div>
       <h2 className="project_proposal_label">Proposals</h2>
-      <div className="project_proposal_container">
-        {jobDetails.proposals.map((item) => (
-          <div key={item._id} className="proposal">
-            <p>{item.proposalText}</p>
-            <p>{item.budget}</p>
-            <p>{item.duration}</p>
-            <p>{item.status}</p>
-            <p>{formatDate(item.createdAt)}</p>
-          </div>
-        ))}
-      </div>
+      <ProjectProposalContainer jobDetails={jobDetails} />
     </section>
   );
 };

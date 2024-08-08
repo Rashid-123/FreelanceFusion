@@ -5,13 +5,13 @@ const authMiddleware = async (req, res, next) => {
   const Authorization = req.headers.Authorization || req.headers.authorization;
 
   if (Authorization && Authorization.startsWith("Bearer")) {
-    console.log("in Bearer");
+    // console.log("in Bearer");
     const token = Authorization.split(" ")[1];
     jwt.verify(token, process.env.JWT_SECRET, (err, info) => {
       if (err) {
         return next(new HttpError("Unauthorized, Invalid token.", 403));
       }
-      console.log("after");
+      // console.log("after");
 
       req.user = info;
       next();

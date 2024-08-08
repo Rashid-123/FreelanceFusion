@@ -6,7 +6,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Loader from "../components/Loader";
-import Job from "../components/Job";
+// import Job from "../components/Job";
 const Profile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAvatarTouched, setIsAvatarTouched] = useState(false);
@@ -17,9 +17,9 @@ const Profile = () => {
   const [contact, setContact] = useState("");
   const [editMode, setEditMode] = useState(false);
   //
-  const [projects, setProjects] = useState([]);
+
   //
-  const [proposalsend, setProposalsend] = useState([]);
+
   //
   const currentUser = useSelector((state) => state.user.currentUser);
   const userId = currentUser?.id;
@@ -57,8 +57,7 @@ const Profile = () => {
         );
         setContact(userData.contact);
         setAvatar(userData.avatarURL);
-        setProjects(userData.projects);
-        setProposalsend(userData.proposalsSent);
+
         setIsLoading(false);
       } catch (error) {
         console.log("Error in fetching user data", error);
@@ -186,6 +185,20 @@ const Profile = () => {
         )}
       </div>
       <h2>{name}</h2>
+      <div>
+        <Link to={`/bids/${userId}`}>
+          <button>Bids</button>
+        </Link>
+        <Link to={`/projects/${userId}`}>
+          <button>Projects</button>
+        </Link>
+        <Link to={`/ongoingProjects/${userId}`}>
+          <button>Ongoing Projects</button>
+        </Link>
+        <Link to={`/ongoingJobs/${userId}`}>
+          <button>jobs</button>
+        </Link>
+      </div>
       <form action="" onSubmit={updateUserDetails} className="user_form">
         {!editMode && (
           <button type="button" onClick={toggleEditMode} className="edit_btn">
@@ -249,58 +262,6 @@ const Profile = () => {
           </div>
         </div>
       </form>
-      <div className="profile_projects ">
-        <h2 className="profile_projects_tag">Your Projects</h2>
-        <div className="profile_projects_container">
-          {projects.map((job) => (
-            <Link
-              key={job.id}
-              to={`/project_details/${job._id}`}
-              className="job"
-            >
-              <h2>
-                {job.title.length > 35
-                  ? `${job.title.slice(0, 35)}...`
-                  : job.title}
-              </h2>
-              <p className="job_description">
-                {job.description.length > 100
-                  ? `${job.description.slice(0, 100)}...`
-                  : job.description}
-              </p>
-              <p className="job_budget">
-                <span>Budget</span> : {job.budget}
-              </p>
-              <p className="job_category">{job.category}</p>
-            </Link>
-          ))}
-        </div>
-      </div>
-      <div className="profile_proposalsend">
-        <h2 className="profile_proposal_tag">Your Bids</h2>
-        <div className="profile_proposal_container">
-          {proposalsend.map((item) => (
-            <Link key={item._id} className="job">
-              <h2>
-                {item.job.title.length > 35
-                  ? `${item.job.title.slice(0, 35)}...`
-                  : item.job.title}
-              </h2>
-              <p className="job_description">
-                {item.proposalTextlength > 100
-                  ? `${item.proposalText.slice(0, 100)}...`
-                  : item.proposalText}
-              </p>
-              <p className="job_budget">
-                <span>Budget</span> : {item.budget}
-              </p>
-              <p className="bid_status">
-                Status :<span>{item.status}</span>
-              </p>
-            </Link>
-          ))}
-        </div>
-      </div>
     </section>
   );
 };

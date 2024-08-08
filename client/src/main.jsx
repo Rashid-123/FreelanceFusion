@@ -15,6 +15,12 @@ import Jobs from "./pages/Jobs";
 import Createjob from "./pages/Createjob";
 import JobDetails from "./pages/JobDetails";
 import Userproject_details from "./pages/Userproject_details";
+import UserBids from "./pages/UserBids";
+import UserProjects from "./pages/UserProjects";
+import OngoingProjects from "./pages/OngoingProjects";
+import OngoingJobs from "./pages/OngoingJobs";
+import Ongoingjob_details from "./pages/OngoingJob_details";
+import OngoingProject_details from "./pages/OngoingProject_details";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -27,8 +33,17 @@ const router = createBrowserRouter([
       { path: "profile", element: <Profile /> },
       { path: "jobs", element: <Jobs /> },
       { path: "create_job", element: <Createjob /> },
+      { path: "bids/:id", element: <UserBids /> },
+      { path: "projects/:id", element: <UserProjects /> },
+      { path: "ongoingProjects/:id", element: <OngoingProjects /> },
+      { path: "ongoingJobs/:id", element: <OngoingJobs /> },
       { path: "jobdetails/:id", element: <JobDetails /> },
       { path: "project_details/:id", element: <Userproject_details /> },
+      { path: "ongoingJob_details/:id", element: <Ongoingjob_details /> },
+      {
+        path: "ongoingProject_details/:id",
+        element: <OngoingProject_details />,
+      },
     ],
   },
 ]);
