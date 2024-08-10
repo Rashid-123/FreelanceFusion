@@ -20,7 +20,7 @@ import UserProjects from "./pages/UserProjects";
 import OngoingProjects from "./pages/OngoingProjects";
 import OngoingJobs from "./pages/OngoingJobs";
 import Ongoingjob_details from "./pages/OngoingJob_details";
-import OngoingProject_details from "./pages/OngoingProject_details";
+// import OngoingProject_details from "./pages/OngoingProject_details";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -42,7 +42,7 @@ const router = createBrowserRouter([
       { path: "ongoingJob_details/:id", element: <Ongoingjob_details /> },
       {
         path: "ongoingProject_details/:id",
-        element: <OngoingProject_details />,
+        element: <Ongoingjob_details />,
       },
     ],
   },

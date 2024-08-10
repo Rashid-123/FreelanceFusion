@@ -38,11 +38,19 @@ const liveJobSchema = new mongoose.Schema(
         {
           amount: {
             type: String,
+            // required: true,
+          },
+          description: {
+            type: String,
             required: true,
           },
           confirmed: {
             type: Boolean,
             default: false,
+          },
+          dateAdded: {
+            type: Date,
+            default: Date.now,
           },
         },
       ],

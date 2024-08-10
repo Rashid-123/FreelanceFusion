@@ -13,6 +13,7 @@ const {
   ongoingJobs,
   ongoingProjects,
   ongoingJob_details,
+  addMilestone,
 } = require("../controllers/userController");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -30,6 +31,8 @@ router.get("/userBids/:id", authMiddleware, userBids);
 router.get("/ongoingJobs/:id", authMiddleware, ongoingJobs);
 router.get("/ongoingProjects/:id", authMiddleware, ongoingProjects);
 router.get("/ongoingjob_details/:id", authMiddleware, ongoingJob_details);
+//
+router.post("/addMilestone/:id", authMiddleware, addMilestone);
 
 router.post("/create-checkout-session", checkout);
 module.exports = router;

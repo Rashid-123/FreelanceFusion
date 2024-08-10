@@ -572,6 +572,59 @@ const ongoingJob_details = async (req, res, next) => {
   }
 };
 
+//////////////////////////////////////////////////////////////////////////////////
+///-------------------------- ADD MILESTONE ----------------------------------------------
+const addMilestone = async (req, res, next) => {
+  try {
+    const { id } = req.params; // Project ID from URL params
+    const { description } = req.body; // Milestone description from request body
+    // const userId = req.user._id; // Assuming the user ID is available from a middleware (like in a JWT payload)
+
+    // Find the project by ID
+    const project = await LiveJobs.findById(id);
+    console.log("Project:", project);
+    console.log("Freelancer ID:", project?.freelancer);
+    // console.log("User ID:", userId);
+    // Check if project exists
+    if (!project) {
+      return res.status(404).json({ message: "Project Not Found" });
+    }
+
+    // Check if the user is the freelancer associated with the project
+    // if (project.freelancer.toString() !== userId.toString()) {
+    //   return res.status(403).json({
+    //     message: "You are not authorized to add a milestone to this project",
+    //   });
+    // }
+
+    // Check if the project already has 3 milestones
+    if (project.milestones.length >= 3) {
+      return res
+        .status(400)
+        .json({ message: "You can only add up to 3 milestones" });
+    }
+
+    // Calculate the milestone amount as 30% of the project's total amount
+    const milestoneAmount = (parseFloat(project.amount) * 0.3).toFixed(2); // Convert to float, calculate, and keep two decimal places
+
+    // Add the new milestone with the current date and time
+    project.milestones.push({
+      description,
+      amount: milestoneAmount,
+      dateAdded: Date.now(),
+    });
+
+    // Save the updated project
+    await project.save();
+
+    // Send the updated project as the response
+    return res.status(200).json(project);
+  } catch (error) {
+    console.error("Error adding milestone:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
 /////////////////////////////////////////////////////////////////////////////////
 
 module.exports = {
@@ -588,4 +641,5 @@ module.exports = {
   ongoingJobs,
   ongoingProjects,
   ongoingJob_details,
+  addMilestone,
 };
